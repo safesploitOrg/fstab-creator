@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fstab Creator</title>
+    <link rel="icon" href="assets/images/create-96.png" type="image/png"/>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>fstab (file system table) Entry Creator</h1>
+        
+        <form id="fstab-form">
+            <label for="device">Device:</label>
+            <input type="text" id="device" placeholder="/dev/sda1" required><br>
+
+            <label for="mount-point">Mount Point:</label>
+            <input type="text" id="mount-point" placeholder="/mnt/data" required><br>
+
+            <label for="fs-type">File System Type:</label>
+            <select id="fs-type" required>
+                <option value="" disabled selected>Select File System Type</option>
+                <option value="ext4">ext4</option>
+                <option value="ext3">ext3</option>
+                <option value="ext2">ext2</option>
+                <option value="xfs">xfs</option>
+                <option value="ntfs">ntfs</option>
+                <option value="vfat">vfat</option>
+                <option value="btrfs">btrfs</option>
+                <option value="exfat">exfat</option>
+                <option value="f2fs">f2fs</option>
+                <option value="nfs">nfs</option>
+                <option value="cifs">cifs</option>
+            </select><br>
+
+            <label for="options">Options:</label><br>
+
+            <!-- Basic Options -->
+            <h3>Basic Options:</h3>
+            <label><input type="checkbox" id="defaults" checked> defaults - Standard options for most use cases</label><br>
+            <label><input type="checkbox" id="noatime"> noatime - Do not update access time on files</label><br>
+            <label><input type="checkbox" id="nodiratime"> nodiratime - Do not update access time on directories</label><br>
+            <label><input type="checkbox" id="rw"> rw - Mount the file system read-write</label><br>
+            <label><input type="checkbox" id="ro"> ro - Mount the file system read-only</label><br>
+
+            <!-- File System Specific Options -->
+            <h3>File System Specific Options:</h3>
+            <label><input type="checkbox" id="quota"> quota - Enable disk quotas for this filesystem</label><br>
+            <label><input type="checkbox" id="usrquota"> usrquota - Enable user disk quotas</label><br>
+            <label><input type="checkbox" id="grpquota"> grpquota - Enable group disk quotas</label><br>
+            <label><input type="checkbox" id="user_xattr"> user_xattr - Allow user-defined extended attributes</label><br>
+            <label><input type="checkbox" id="discard"> discard - Enable trim support for SSDs (free unused blocks)</label><br>
+
+            <!-- Systemd Options -->
+            <h3>Systemd Specific Options:</h3>
+            <label><input type="checkbox" id="x-systemd.device-timeout=1"> x-systemd.device-timeout=1 - Timeout for device to be ready in systemd</label><br>
+            <label><input type="checkbox" id="x-systemd.mount-timeout=1"> x-systemd.mount-timeout=1 - Timeout for mount operation in systemd</label><br>
+
+            <!-- NFS Options -->
+            <!-- <h3>NFS Options:</h3>
+            <label><input type="checkbox" id="mountvers"> mountvers=<input type="text" id="mountvers" placeholder="3"> - Specify NFS version (e.g., mountvers=3)</label><br>
+            <label><input type="checkbox" id="tcp"> tcp - Use TCP for NFS</label><br>
+            <label><input type="checkbox" id="nolock"> nolock - Disable file locking for NFS</label><br>
+            <label><input type="checkbox" id="rsize"> rsize=<input type="number" id="rsize" placeholder="32768"> - Set read size for NFS</label><br>
+            <label><input type="checkbox" id="wsize"> wsize=<input type="number" id="wsize" placeholder="32768"> - Set write size for NFS</label><br> -->
+
+            <!-- CIFS/SMB Options -->
+            <!-- <h3>CIFS/SMB Options:</h3>
+            <label><input type="checkbox" id="credentials"> credentials=<input type="text" id="credentials" placeholder="/path/to/credentials"> - Path to credentials file</label><br>
+            <label><input type="checkbox" id="uid"> uid=<input type="number" id="uid" placeholder="1000"> - User ID for the file system</label><br>
+            <label><input type="checkbox" id="gid"> gid=<input type="number" id="gid" placeholder="1000"> - Group ID for the file system</label><br>
+            <label><input type="checkbox" id="file_mode"> file_mode=<input type="text" id="file_mode" placeholder="0777"> - File permissions for the file system</label><br>
+            <label><input type="checkbox" id="dir_mode"> dir_mode=<input type="text" id="dir_mode" placeholder="0777"> - Directory permissions for the file system</label><br> -->
+
+            <hr>
+
+            <label for="dump">Dump:</label>
+            <select id="dump">
+                <option value="0" selected>0 - No backup</option>
+                <option value="1">1 - Backup with dump</option>
+            </select><br>
+            <small>Defines whether to back up the file system with the `dump` command. 0 = no, 1 = yes.</small><br>
+
+            <label for="pass">Pass:</label>
+            <select id="pass">
+                <option value="0" selected>0 - Do not check at boot</option>
+                <option value="1">1 - Check first at boot</option>
+                <option value="2">2 - Check after root file system</option>
+            </select><br>
+            <small>Controls the order in which file systems are checked at boot. 0 = do not check, 1 = check first, 2 = check after.</small><br>
+
+            <hr>
+
+            <button type="submit">Generate fstab Entry</button>
+        </form>
+
+        <h2>Generated fstab Entry:</h2>
+        <textarea id="output"></textarea>
+        <!-- <button id="copy-btn" style="display: none;" onclick="copyToClipboard()">Copy to Clipboard</button> -->
+
+        <div id="warning" style="display: none;">
+            <h3>Important:</h3>
+            <p>After making changes to the fstab file, run <code>systemctl daemon-reload</code> to apply the changes.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>
+            fstab Creator | &copy; <span id="year"></span> |
+            <a href="https://github.com/safesploitOrg/fstab-creator" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        </p>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

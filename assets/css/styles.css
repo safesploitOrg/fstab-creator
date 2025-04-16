@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin: -2px 0 -2px;
+}
+
+input[type="text"], input[type="number"], select, button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Generated output styling (old) */
+pre {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Output section styling (textarea) */
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    resize: vertical; /* Allow resizing vertically */
+    margin-top: 20px;
+    box-sizing: border-box; /* Ensure padding does not affect width */
+}
+
+small {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Footer styling */
+.site-footer {
+    margin-top: 60px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f4fa;
+    border-top: 1px solid #ddd;
+    font-size: 0.9rem;
+    color: #555;
+    border-radius: 0 0 12px 12px;
+}
+
+.site-footer a {
+    color: #1e73ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
