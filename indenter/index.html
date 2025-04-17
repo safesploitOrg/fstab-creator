@@ -172,7 +172,7 @@ function generateHeader(indentColumns, columnWidths) {
 
   const formatted = headers.map((field, i) => {
     const width = columnWidths[i] || field.length;
-    return indentColumns[i] ? field.padEnd(width + 2) : field + ' ';
+    return indentColumns[i] ? field.padEnd(width + 1) : field + ' ';
   }).join('').trimEnd();
 
   return '# ' + formatted;
