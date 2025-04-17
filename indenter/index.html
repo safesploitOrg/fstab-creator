@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FSTAB Indenter with Width Control</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    textarea[readonly] {
+      background: #222;
+      color: #0f0;
+      height: 200px;
+      white-space: pre;
+      overflow-x: auto;
+      cursor: pointer;
+    }
+    textarea#fstabInput {
+      background: #fff;
+      color: #000;
+      height: 200px;
+    }
+    button {
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    label {
+      margin-right: 15px;
+      display: inline-block;
+      min-width: 120px;
+    }
+    .field-control {
+      margin-bottom: 10px;
+    }
+    .field-control input[type=number] {
+      width: 50px;
+    }
+
+    /* Footer styling */
+    .site-footer {
+      margin-top: 60px;
+      padding: 20px;
+      text-align: center;
+      background-color: #f0f4fa;
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+      color: #555;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .site-footer a {
+      color: #1e73ff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<h2>FSTAB Indenter with Toggle & Width Control</h2>
+
+<div class="field-control">
+  <label><input type="checkbox" checked id="col0"> device</label>
+  Width: <input type="number" id="width0" value="40" min="1">
+</div>
+<div class="field-control">
+  <label><input type="checkbox" checked id="col1"> mountPoint</label>
+  Width: <input type="number" id="width1" value="40" min="1">
+</div>
+<div class="field-control">
+  <label><input type="checkbox" checked id="col2"> fsType</label>
+  Width: <input type="number" id="width2" value="10" min="1">
+</div>
+<div class="field-control">
+  <label><input type="checkbox" checked id="col3"> options</label>
+  Width: <input type="number" id="width3" value="30" min="1">
+</div>
+<div class="field-control">
+  <label><input type="checkbox" checked id="col4"> dump</label>
+  Width: <input type="number" id="width4" value="3" min="1">
+</div>
+<div class="field-control">
+  <label><input type="checkbox" checked id="col5"> pass</label>
+  Width: <input type="number" id="width5" value="3" min="1">
+</div>
+
+<textarea id="fstabInput" placeholder="Paste your /etc/fstab content here..."></textarea>
+<br>
+<button onclick="indentFstab()">Format</button>
+
+<textarea id="fstabOutput" readonly onclick="this.select()" placeholder="Formatted output will appear here..."></textarea>
+
+<footer class="site-footer">
+  <p>
+    fstab Creator | &copy; <span id="year"></span> |
+    <a href="https://github.com/safesploitOrg/fstab-creator" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+  </p>
+</footer>
+
+<script>
+function getUserSettings() {
+  const indentColumns = [];
+  const columnWidths = [];
+
+  // Header labels (for comparison)
+  const headers = [
+    '<file system>',
+    '<mount point>',
+    '<type>',
+    '<options>',
+    '<dump>',
+    '<pass>'
+  ];
+
+  for (let i = 0; i < 6; i++) {
+    indentColumns[i] = document.getElementById(`col${i}`).checked;
+    const userWidth = parseInt(document.getElementById(`width${i}`).value, 10);
+    columnWidths[i] = Math.max(userWidth, headers[i].length);
+  }
+
+  return { indentColumns, columnWidths };
+}
+
+
+function formatLine(fields, indentColumns, columnWidths) {
+  return fields.map((field, i) => {
+    const width = columnWidths[i] || field.length;
+    return indentColumns[i] ? field.padEnd(width + 2) : field + ' ';
+  }).join('').trimEnd();
+}
+
+function parseFstabLines(rawText) {
+  const lines = rawText.split('\n');
+  const parsed = [];
+
+  for (const line of lines) {
+    if (/^\s*#/.test(line) || /^\s*$/.test(line)) {
+      parsed.push({ isComment: true, text: line });
+    } else {
+      const fields = line.trim().split(/\s+/);
+      parsed.push({ isComment: false, fields });
+    }
+  }
+
+  return parsed;
+}
+
+function generateHeader(indentColumns, columnWidths) {
+  const headers = [
+    '<file system>',
+    '<mount point>',
+    '<type>',
+    '<options>',
+    '<dump>',
+    '<pass>'
+  ];
+
+  const formatted = headers.map((field, i) => {
+    const width = columnWidths[i] || field.length;
+    return indentColumns[i] ? field.padEnd(width + 2) : field + ' ';
+  }).join('').trimEnd();
+
+  return '# ' + formatted;
+}
+
+function indentFstab() {
+  const { indentColumns, columnWidths } = getUserSettings();
+  const rawInput = document.getElementById('fstabInput').value;
+  const parsedLines = parseFstabLines(rawInput);
+
+  let result = generateHeader(indentColumns, columnWidths) + '\n';
+
+  for (const line of parsedLines) {
+    if (line.isComment) {
+      result += line.text + '\n';
+    } else {
+      result += formatLine(line.fields, indentColumns, columnWidths) + '\n';
+    }
+  }
+
+  document.getElementById('fstabOutput').value = result.trim();
+}
+
+// Set the current year in the footer
+function setFooterYear() {
+  const year = new Date().getFullYear();
+  document.getElementById('year').textContent = year;
+}
+setFooterYear();
+</script>
+
+</body>
+</html>
